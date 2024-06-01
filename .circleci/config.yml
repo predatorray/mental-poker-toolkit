@@ -1,9 +1,9 @@
 # https://circleci.com/docs/2.0/language-javascript/
 version: 2
 jobs:
-  'node-10':
+  'node-18':
     docker:
-      - image: circleci/node:10
+      - image: cimg/node:18.20
     steps:
       - checkout
       # Download and cache dependencies
@@ -20,9 +20,9 @@ jobs:
       - run: npm test
       - run: npm run cov:send
       - run: npm run cov:check
-  'node-12':
+  'node-20':
     docker:
-      - image: circleci/node:12
+      - image: cimg/node:20.14
     steps:
       - checkout
       - restore_cache:
@@ -37,9 +37,9 @@ jobs:
       - run: npm test
       - run: npm run cov:send
       - run: npm run cov:check
-  'node-latest':
+  'node-lts':
     docker:
-      - image: circleci/node:latest
+      - image: cimg/node:lts
     steps:
       - checkout
       - restore_cache:
@@ -59,6 +59,6 @@ workflows:
   version: 2
   build:
     jobs:
-      - 'node-10'
-      - 'node-12'
-      - 'node-latest'
+      - 'node-18'
+      - 'node-20'
+      - 'node-lts'
