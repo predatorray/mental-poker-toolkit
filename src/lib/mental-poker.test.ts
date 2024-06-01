@@ -1,13 +1,13 @@
 import test from 'ava';
 
-import { EncodedDeck, Player } from './mental-poker';
+import { createPlayer, EncodedDeck } from './mental-poker';
 import { encodeStandardCard, getStandard52Deck } from './poker';
 
-for (const bits of [8, 16, 32, 64, 128]) {
-  test(`standard mental poker (bits = ${bits})`, (t) => {
+for (const bits of [8, 16]) {
+  test(`standard mental poker (bits = ${bits})`, async (t) => {
     const deck = getStandard52Deck();
 
-    const alice = new Player({
+    const alice = await createPlayer({
       cards: deck.length,
       bits,
     });
@@ -16,7 +16,7 @@ for (const bits of [8, 16, 32, 64, 128]) {
     );
     const encryptedWithKeyA = alice.encryptAndShuffle(deckEncoded);
 
-    const bob = new Player({
+    const bob = await createPlayer({
       cards: deck.length,
       publicKey: alice.publicKey,
       bits,

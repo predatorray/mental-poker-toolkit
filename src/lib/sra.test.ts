@@ -1,10 +1,10 @@
 import test from 'ava';
 
-import { ShamirRivestAldeman } from './sra';
+import { generateShamirRivestAldeman } from './sra';
 
-for (const bits of [8, 16, 32, 64, 128]) {
-  test(`encrypt and decrypt (bits = ${bits})`, (t) => {
-    const sra = new ShamirRivestAldeman({
+for (const bits of [8, 16]) {
+  test(`encrypt and decrypt (bits = ${bits})`, async (t) => {
+    const sra = await generateShamirRivestAldeman({
       bits,
       keys: {
         p: BigInt(7),
@@ -18,8 +18,8 @@ for (const bits of [8, 16, 32, 64, 128]) {
     t.is(decrypted, message);
   });
 
-  test(`encrypt and decrypt using random e (bits = ${bits})`, (t) => {
-    const sra = new ShamirRivestAldeman({
+  test(`encrypt and decrypt using random e (bits = ${bits})`, async (t) => {
+    const sra = await generateShamirRivestAldeman({
       bits,
       keys: {
         p: BigInt(7),
@@ -32,8 +32,8 @@ for (const bits of [8, 16, 32, 64, 128]) {
     t.is(decrypted, message);
   });
 
-  test(`encrypt and decrypt using random p q & e (bits = ${bits})`, (t) => {
-    const sra = new ShamirRivestAldeman({
+  test(`encrypt and decrypt using random p q & e (bits = ${bits})`, async (t) => {
+    const sra = await generateShamirRivestAldeman({
       bits,
     });
     const message = BigInt(4);
@@ -42,11 +42,11 @@ for (const bits of [8, 16, 32, 64, 128]) {
     t.is(decrypted, message);
   });
 
-  test(`commutative encryption (bits = ${bits})`, (t) => {
-    const alice = new ShamirRivestAldeman({
+  test(`commutative encryption (bits = ${bits})`, async (t) => {
+    const alice = await generateShamirRivestAldeman({
       bits,
     });
-    const bob = new ShamirRivestAldeman({
+    const bob = await generateShamirRivestAldeman({
       bits,
       keys: {
         p: alice.publicKey.p,

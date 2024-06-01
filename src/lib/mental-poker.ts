@@ -1,6 +1,9 @@
-import { generateRandomInt } from './math';
-import { decodeStandardCard, StandardDeck } from './poker';
-import { PublicKey, ShamirRivestAldeman } from './sra';
+import {
+  generateShamirRivestAldeman,
+  PublicKey,
+  ShamirRivestAldeman,
+} from './sra';
+import { generateRandomInt } from './util';
 
 export class EncodedDeck {
   public cards: bigint[];
@@ -38,30 +41,18 @@ export class EncodedDeck {
       }
     }
   }
-
-  convertToStandardDeck(): StandardDeck {
-    return this.cards.map((card) => decodeStandardCard(Number(card)));
-  }
 }
 
 export class Player {
   private mainSraKey: ShamirRivestAldeman;
   private individualSraKeys: ShamirRivestAldeman[];
 
-  constructor(props: { cards: number; publicKey?: PublicKey; bits?: number }) {
-    this.mainSraKey = new ShamirRivestAldeman({
-      bits: props.bits ?? 8,
-      keys: props.publicKey,
-    });
-    this.individualSraKeys = [];
-    for (let i = 0; i < props.cards; ++i) {
-      this.individualSraKeys.push(
-        new ShamirRivestAldeman({
-          bits: props.bits ?? 8,
-          keys: this.mainSraKey.publicKey,
-        })
-      );
-    }
+  constructor(props: {
+    mainSraKey: ShamirRivestAldeman;
+    individualSraKeys: ShamirRivestAldeman[];
+  }) {
+    this.mainSraKey = props.mainSraKey;
+    this.individualSraKeys = props.individualSraKeys;
   }
 
   encryptAndShuffle(deckEncoded: EncodedDeck): EncodedDeck {
@@ -85,4 +76,25 @@ export class Player {
   get publicKey() {
     return this.mainSraKey.publicKey;
   }
+}
+
+export async function createPlayer(props: {
+  cards: number;
+  publicKey?: PublicKey;
+  bits?: number;
+}): Promise<Player> {
+  const mainSraKey = await generateShamirRivestAldeman({
+    bits: props.bits ?? 8,
+    keys: props.publicKey,
+  });
+  const individualSraKeys = [];
+  for (let i = 0; i < props.cards; ++i) {
+    individualSraKeys.push(
+      await generateShamirRivestAldeman({
+        bits: props.bits ?? 8,
+        keys: mainSraKey.publicKey,
+      })
+    );
+  }
+  return new Player({ mainSraKey, individualSraKeys });
 }

@@ -1,11 +1,4 @@
-import {
-  gcd,
-  generateProbablePrime,
-  generateRandomInt,
-  modInverse,
-  modPow,
-  ONE,
-} from './math';
+import { gcd, modInv, modPow, prime } from 'bigint-crypto-utils';
 
 export class PublicKey {
   public readonly p: bigint;
@@ -17,13 +10,13 @@ export class PublicKey {
     this.p = p;
     this.q = q;
     this.n = this.p * this.q;
-    this.phi = (this.p - ONE) * (this.q - ONE);
+    this.phi = (this.p - 1n) * (this.q - 1n);
   }
 
-  generateE(bits: number): bigint {
+  async generateE(bits: number): Promise<bigint> {
     while (true) {
-      const e = generateProbablePrime(bits);
-      if (gcd(e, this.phi) === ONE) {
+      const e = await prime(bits);
+      if (gcd(e, this.phi) === 1n) {
         return e;
       }
     }
@@ -64,31 +57,13 @@ export class ShamirRivestAldeman {
   public readonly decryptionKey: DecryptionKey;
 
   constructor(props: {
-    bits: number;
-    keys?: {
-      p: bigint;
-      q: bigint;
-      e?: bigint;
-    };
+    publicKey: PublicKey;
+    encryptionKey: EncryptionKey;
+    decryptionKey: DecryptionKey;
   }) {
-    this.publicKey = props.keys
-      ? new PublicKey(props.keys.p, props.keys.q)
-      : (() => {
-          const gen1 = 2 + generateRandomInt(10);
-          const p = generateProbablePrime(props.bits, gen1);
-
-          let q = p;
-          let gen2 = gen1 + generateRandomInt(10) + 1;
-          while (q === p) {
-            q = generateProbablePrime(props.bits, ++gen2);
-          }
-          return new PublicKey(p, q);
-        })();
-    const e = props.keys?.e ?? this.publicKey.generateE(props.bits);
-    const d = modInverse(e, this.publicKey.phi);
-
-    this.encryptionKey = new EncryptionKey(e, this.publicKey.n);
-    this.decryptionKey = new DecryptionKey(d, this.publicKey.n);
+    this.publicKey = props.publicKey;
+    this.encryptionKey = props.encryptionKey;
+    this.decryptionKey = props.decryptionKey;
   }
 
   encrypt(message: bigint): bigint {
@@ -98,4 +73,32 @@ export class ShamirRivestAldeman {
   decrypt(cipher: bigint): bigint {
     return this.decryptionKey.decrypt(cipher);
   }
+}
+
+export async function generateShamirRivestAldeman(props: {
+  bits: number;
+  keys?: {
+    p: bigint;
+    q: bigint;
+    e?: bigint;
+  };
+}): Promise<ShamirRivestAldeman> {
+  const p = props.keys?.p ?? (await prime(props.bits));
+  const q =
+    props.keys?.q ??
+    (await (async () => {
+      let q = p;
+      while (q === p) {
+        q = await prime(props.bits);
+      }
+      return q;
+    })());
+  const publicKey = new PublicKey(p, q);
+
+  const e = props.keys?.e ?? (await publicKey.generateE(props.bits));
+  const d = modInv(e, publicKey.phi);
+
+  const encryptionKey = new EncryptionKey(e, publicKey.n);
+  const decryptionKey = new DecryptionKey(d, publicKey.n);
+  return new ShamirRivestAldeman({ publicKey, encryptionKey, decryptionKey });
 }
