@@ -7,7 +7,11 @@
   "module": "build/module/index.js",
   "repository": "https://github.com/predatorray/mental-poker-toolkit",
   "license": "MIT",
-  "keywords": [],
+  "keywords": [
+    "game",
+    "mental-poker",
+    "encryption"
+  ],
   "scripts": {
     "build": "run-p build:*",
     "build:main": "tsc -p tsconfig.json",
