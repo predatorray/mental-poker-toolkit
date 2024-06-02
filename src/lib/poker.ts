@@ -1,7 +1,19 @@
 import { reverseObject } from './util';
 
+/**
+ * Suit of a poker card.
+ *
+ * @remarks
+ * can be one of `'Heart'`, `'Diamond'`, `'Club'` or `'Spade'`
+ */
 export type Suit = 'Heart' | 'Diamond' | 'Club' | 'Spade';
 
+/**
+ * Rank of a poker card.
+ *
+ * @remarks
+ * e.g. `A`, `1`, `2`, ..., `9`, `T`, `J`, `Q`, `K`
+ */
 export type Rank =
   | 'A'
   | '2'
@@ -44,13 +56,25 @@ const RankEncoding: { [key in Rank]: number } = {
 
 const RankDecoding: { [key: number]: Rank } = reverseObject(RankEncoding);
 
+/**
+ * Standard poker card (52 cards)
+ *
+ * @remarks
+ * for example, a Spade Ace is `{ suit: 'Spade', rank: 'A' }`
+ */
 export interface StandardCard {
   suit: Suit;
   rank: Rank;
 }
 
+/**
+ * Deck of Standard poker card.
+ */
 export type StandardDeck = Array<StandardCard>;
 
+/**
+ * Returns a deck of standard 52 cards.
+ */
 export function getStandard52Deck(): StandardDeck {
   const standardDeck: StandardDeck = [];
   for (const suit in SuitEncoding) {
@@ -64,10 +88,19 @@ export function getStandard52Deck(): StandardDeck {
   return standardDeck;
 }
 
+/**
+ * Encodes a `StandardCard` into a number
+ * @param card a `StandardCard` instance
+ * @returns encoded number of the `StandardCard` (the value is always between 1 and 52)
+ */
 export function encodeStandardCard(card: StandardCard): number {
   return (SuitEncoding[card.suit] - 1) * 13 + RankEncoding[card.rank];
 }
 
+/**
+ * Dncodes a number into a `StandardCard`
+ * @param n the encoded number which was previouly returned from {@link encodeStandardCard}. it must be a number between 1 and 52
+ */
 export function decodeStandardCard(n: number): StandardCard {
   let rankCode = n % 13;
   if (rankCode === 0) {
