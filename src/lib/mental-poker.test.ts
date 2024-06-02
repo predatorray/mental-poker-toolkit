@@ -33,12 +33,8 @@ test(`standard mental poker`, async (t) => {
   );
 
   const shuffledUnencryptedCards = encryptedBothKeysIndividually.cards
-    .map((card, offset) =>
-      alice.getIndividualEncryptionKey(offset).decrypt(card)
-    )
-    .map((card, offset) =>
-      bob.getIndividualEncryptionKey(offset).decrypt(card)
-    );
+    .map((card, offset) => alice.getIndividualKey(offset).decrypt(card))
+    .map((card, offset) => bob.getIndividualKey(offset).decrypt(card));
 
   const distinctCards = new Set(shuffledUnencryptedCards);
   t.is(distinctCards.size, 52);
