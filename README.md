@@ -1,8 +1,9 @@
 # mental-poker-toolkit
 
+![NPM Version](https://img.shields.io/npm/v/mental-poker-toolkit)
 ![License](https://img.shields.io/github/license/predatorray/mental-poker-toolkit)
-[![CircleCI](https://circleci.com/gh/predatorray/mental-poker-toolkit.svg?style=svg)](https://circleci.com/gh/predatorray/mental-poker-toolkit)
 [![codecov](https://codecov.io/github/predatorray/mental-poker-toolkit/branch/master/graph/badge.svg?token=xq99f5bDOZ)](https://codecov.io/github/predatorray/mental-poker-toolkit)
+[![CircleCI](https://circleci.com/gh/predatorray/mental-poker-toolkit.svg?style=svg)](https://circleci.com/gh/predatorray/mental-poker-toolkit)
 
 Toolkit for implementing [mental poker](https://en.wikipedia.org/wiki/Mental_poker) games.
 
