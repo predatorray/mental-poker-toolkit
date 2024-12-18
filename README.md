@@ -27,7 +27,6 @@ or
 import * as MentalPokerToolkit from 'mental-poker-toolkit';
 ```
 
-### Example
 
 Here is a step-by-step example following the [algorithm](https://en.wikipedia.org/wiki/Mental_poker#The_algorithm) explained on Wikipedia.
 
@@ -94,6 +93,9 @@ const decryptedCard = bobIndividualKey.decrypt(
 
 console.log(`suit = ${decryptedCard.suit}, rank = ${decryptedCard.rank}`);
 ```
+
+This project is also being used by [mental-texas-holdem](https://github.com/predatorray/mental-texas-holdem) to implement a P2P Texas Hold'em poker game in browsers.
+Please see [`MentalPokerGameRoom.ts`](https://github.com/predatorray/mental-texas-holdem/blob/master/src/lib/MentalPokerGameRoom.ts) for a real-world example.
 
 ## API Reference
 
